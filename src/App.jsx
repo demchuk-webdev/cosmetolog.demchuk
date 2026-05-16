@@ -66,7 +66,7 @@ function App() {
         <div className="max-w-md mx-auto flex flex-col items-center justify-center gap-1">
           <div className="flex items-center gap-2 text-gold-400 mb-2">
             <Sparkles size={20} />
-            <h1 className="text-sm font-semibold tracking-widest uppercase">Cosmetolog</h1>
+            <h1 className="text-sm font-semibold tracking-widest uppercase">cosmetolog.demchuk</h1>
           </div>
           <h2 className="text-2xl font-light text-white tracking-wide">Фінанси</h2>
         </div>
