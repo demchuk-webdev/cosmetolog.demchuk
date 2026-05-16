@@ -1,41 +1,59 @@
-const STORAGE_KEY = 'cosmetolog_transactions';
+import { supabase } from './supabase';
 
-export const getTransactions = () => {
-  const data = localStorage.getItem(STORAGE_KEY);
-  if (!data) return [];
-  const parsed = JSON.parse(data);
-  return parsed.sort((a, b) => new Date(b.date) - new Date(a.date));
+export const getTransactions = async () => {
+  const { data, error } = await supabase
+    .from('transactions')
+    .select('*')
+    .order('date', { ascending: false });
+    
+  if (error) {
+    console.error('Error fetching transactions:', error);
+    return [];
+  }
+  return data || [];
 };
 
-export const saveTransaction = (transaction) => {
-  const transactions = getTransactions();
+export const saveTransaction = async (transaction) => {
   if (transaction.id) {
     // Edit existing
-    const index = transactions.findIndex(t => t.id === transaction.id);
-    if (index !== -1) {
-      transactions[index] = { ...transactions[index], ...transaction };
-    }
+    const { error } = await supabase
+      .from('transactions')
+      .update({
+        type: transaction.type,
+        amount: transaction.amount,
+        category: transaction.category,
+        note: transaction.note,
+        date: transaction.date
+      })
+      .eq('id', transaction.id);
+      
+    if (error) console.error('Error updating:', error);
   } else {
     // Add new
-    const newTransaction = {
-      ...transaction,
-      id: crypto.randomUUID(),
-      date: transaction.date || new Date().toISOString()
-    };
-    transactions.unshift(newTransaction);
+    const { error } = await supabase
+      .from('transactions')
+      .insert([{
+        type: transaction.type,
+        amount: transaction.amount,
+        category: transaction.category,
+        note: transaction.note,
+        date: transaction.date || new Date().toISOString()
+      }]);
+      
+    if (error) console.error('Error inserting:', error);
   }
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
 };
 
-export const deleteTransaction = (id) => {
-  const transactions = getTransactions();
-  const updated = transactions.filter(t => t.id !== id);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+export const deleteTransaction = async (id) => {
+  const { error } = await supabase
+    .from('transactions')
+    .delete()
+    .eq('id', id);
+    
+  if (error) console.error('Error deleting:', error);
 };
 
-export const getSummary = (month, year) => {
-  const transactions = getTransactions();
-  
+export const getSummary = (transactions, month, year) => {
   let income = 0;
   let expenses = 0;
   const categoryTotals = {};

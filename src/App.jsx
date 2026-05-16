@@ -10,23 +10,28 @@ function App() {
   const [summary, setSummary] = useState({ income: 0, expenses: 0, profit: 0, categoryTotals: {} });
   const [transactions, setTransactions] = useState([]);
   const [editingItem, setEditingItem] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     refreshData();
   }, [currentDate]);
 
-  const refreshData = () => {
-    setSummary(getSummary(currentDate.getMonth(), currentDate.getFullYear()));
-    const allTransactions = getTransactions();
+  const refreshData = async () => {
+    setIsLoading(true);
+    const allTransactions = await getTransactions();
+    
+    setSummary(getSummary(allTransactions, currentDate.getMonth(), currentDate.getFullYear()));
+    
     const filtered = allTransactions.filter(t => {
       const d = new Date(t.date);
       return d.getMonth() === currentDate.getMonth() && d.getFullYear() === currentDate.getFullYear();
     });
     setTransactions(filtered);
+    setIsLoading(false);
   };
 
-  const handleAddTransaction = (data) => {
-    saveTransaction(data);
+  const handleAddTransaction = async (data) => {
+    await saveTransaction(data);
     setEditingItem(null);
     refreshData();
   };
@@ -36,9 +41,9 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDeleteTransaction = (id) => {
+  const handleDeleteTransaction = async (id) => {
     if (window.confirm('Ви впевнені, що хочете видалити цей запис?')) {
-      deleteTransaction(id);
+      await deleteTransaction(id);
       refreshData();
     }
   };
@@ -78,19 +83,27 @@ function App() {
           </button>
         </div>
 
-        <Dashboard summary={summary} />
-        
-        <TransactionForm 
-          onAdd={handleAddTransaction} 
-          editingItem={editingItem} 
-          onCancelEdit={() => setEditingItem(null)} 
-        />
-        
-        <TransactionList 
-          transactions={transactions} 
-          onEdit={handleEditTransaction}
-          onDelete={handleDeleteTransaction} 
-        />
+        {isLoading ? (
+          <div className="flex justify-center py-10">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold-400"></div>
+          </div>
+        ) : (
+          <>
+            <Dashboard summary={summary} />
+            
+            <TransactionForm 
+              onAdd={handleAddTransaction} 
+              editingItem={editingItem} 
+              onCancelEdit={() => setEditingItem(null)} 
+            />
+            
+            <TransactionList 
+              transactions={transactions} 
+              onEdit={handleEditTransaction}
+              onDelete={handleDeleteTransaction} 
+            />
+          </>
+        )}
       </main>
     </div>
   );
