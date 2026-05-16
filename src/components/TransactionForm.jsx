@@ -8,6 +8,7 @@ export default function TransactionForm({ onAdd, editingItem, onCancelEdit }) {
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [note, setNote] = useState('');
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
 
   useEffect(() => {
     if (editingItem) {
@@ -15,6 +16,7 @@ export default function TransactionForm({ onAdd, editingItem, onCancelEdit }) {
       setAmount(editingItem.amount.toString());
       setCategory(editingItem.category);
       setNote(editingItem.note || '');
+      setDate(editingItem.date.split('T')[0]);
     } else {
       resetForm();
     }
@@ -25,14 +27,22 @@ export default function TransactionForm({ onAdd, editingItem, onCancelEdit }) {
     setAmount('');
     setCategory(CATEGORIES[0]);
     setNote('');
+    setDate(new Date().toISOString().split('T')[0]);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!amount || isNaN(amount) || Number(amount) <= 0) return;
 
+    // Create ISO string from selected date, keeping current time for sorting purposes
+    // Or just appending arbitrary time
+    const [year, month, day] = date.split('-');
+    const now = new Date();
+    const finalDate = new Date(year, month - 1, day, now.getHours(), now.getMinutes(), now.getSeconds()).toISOString();
+
     onAdd({
-      ...(editingItem ? { id: editingItem.id, date: editingItem.date } : {}),
+      ...(editingItem ? { id: editingItem.id } : {}),
+      date: finalDate,
       type,
       amount: Number(amount),
       category,
@@ -73,16 +83,28 @@ export default function TransactionForm({ onAdd, editingItem, onCancelEdit }) {
       </div>
 
       <div className="space-y-5">
-        <div>
-          <label className="block text-[10px] uppercase tracking-widest text-gray-400 mb-2">Сума (₴)</label>
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="0"
-            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-gold-400 text-white placeholder-gray-600 transition-colors"
-            required
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-[10px] uppercase tracking-widest text-gray-400 mb-2">Сума (₴)</label>
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="0"
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-gold-400 text-white placeholder-gray-600 transition-colors"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-[10px] uppercase tracking-widest text-gray-400 mb-2">Дата</label>
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-gold-400 text-white placeholder-gray-600 transition-colors [color-scheme:dark]"
+              required
+            />
+          </div>
         </div>
 
         <div>
