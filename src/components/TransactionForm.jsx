@@ -3,7 +3,7 @@ import { Check, X } from 'lucide-react';
 
 const CATEGORIES = {
   income: ['Процедури', 'Продаж косметики', 'Інше'],
-  expense: ['Матеріали', 'Оренда', 'Реклама', 'Податки', 'Інше']
+  expense: ['Витратні матеріали', 'Препарати', 'Реклама', 'Інше']
 };
 
 export default function TransactionForm({ onAdd, editingItem, onCancelEdit }) {
