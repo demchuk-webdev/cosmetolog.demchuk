@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Check, X } from 'lucide-react';
 
 const CATEGORIES = {
-  income: ['Процедури', 'Продаж косметики', 'Навчання', 'Інше'],
+  income: ['Процедури', 'Продаж косметики', 'Інше'],
   expense: ['Матеріали', 'Оренда', 'Реклама', 'Податки', 'Інше']
 };
 
