@@ -83,28 +83,26 @@ export default function TransactionForm({ onAdd, editingItem, onCancelEdit }) {
       </div>
 
       <div className="space-y-5">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-[10px] uppercase tracking-widest text-gray-400 mb-2">Сума (₴)</label>
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="0"
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-gold-400 text-white placeholder-gray-600 transition-colors"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-[10px] uppercase tracking-widest text-gray-400 mb-2">Дата</label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-gold-400 text-white placeholder-gray-600 transition-colors [color-scheme:dark]"
-              required
-            />
-          </div>
+        <div>
+          <label className="block text-[10px] uppercase tracking-widest text-gray-400 mb-2">Сума (₴)</label>
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="0"
+            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-gold-400 text-white placeholder-gray-600 transition-colors"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-[10px] uppercase tracking-widest text-gray-400 mb-2">Дата</label>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-gold-400 text-white placeholder-gray-600 transition-colors [color-scheme:dark]"
+            required
+          />
         </div>
 
         <div>
