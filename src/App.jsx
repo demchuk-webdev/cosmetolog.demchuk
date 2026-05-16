@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getSummary, getTransactions, saveTransaction, deleteTransaction } from './utils/storage';
+import { getSummary, getTransactions, saveTransaction, deleteTransaction, getCachedTransactions } from './utils/storage';
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import TransactionForm from './components/TransactionForm';
@@ -7,17 +7,24 @@ import TransactionList from './components/TransactionList';
 
 function App() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [summary, setSummary] = useState({ income: 0, expenses: 0, profit: 0, categoryTotals: {} });
-  const [transactions, setTransactions] = useState([]);
+  
+  const initialCache = getCachedTransactions();
+  const initialFiltered = initialCache.filter(t => {
+    const d = new Date(t.date);
+    return d.getMonth() === currentDate.getMonth() && d.getFullYear() === currentDate.getFullYear();
+  });
+
+  const [summary, setSummary] = useState(getSummary(initialCache, currentDate.getMonth(), currentDate.getFullYear()));
+  const [transactions, setTransactions] = useState(initialFiltered);
   const [editingItem, setEditingItem] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(initialCache.length === 0);
 
   useEffect(() => {
     refreshData();
   }, [currentDate]);
 
   const refreshData = async () => {
-    setIsLoading(true);
+    if (transactions.length === 0 && initialCache.length === 0) setIsLoading(true);
     const allTransactions = await getTransactions();
     
     setSummary(getSummary(allTransactions, currentDate.getMonth(), currentDate.getFullYear()));

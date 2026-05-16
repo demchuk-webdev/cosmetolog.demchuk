@@ -8,9 +8,17 @@ export const getTransactions = async () => {
     
   if (error) {
     console.error('Error fetching transactions:', error);
-    return [];
+    const cached = localStorage.getItem('cosmo_cache');
+    return cached ? JSON.parse(cached) : [];
   }
+  
+  localStorage.setItem('cosmo_cache', JSON.stringify(data || []));
   return data || [];
+};
+
+export const getCachedTransactions = () => {
+  const cached = localStorage.getItem('cosmo_cache');
+  return cached ? JSON.parse(cached) : [];
 };
 
 export const saveTransaction = async (transaction) => {
