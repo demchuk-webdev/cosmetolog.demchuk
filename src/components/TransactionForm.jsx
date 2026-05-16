@@ -1,91 +1,118 @@
-import { useState } from 'react';
-import { PlusCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Check, X } from 'lucide-react';
 
 const CATEGORIES = ['Процедури', 'Матеріали', 'Оренда', 'Реклама', 'Інше'];
 
-export default function TransactionForm({ onAdd }) {
+export default function TransactionForm({ onAdd, editingItem, onCancelEdit }) {
   const [type, setType] = useState('income');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [note, setNote] = useState('');
+
+  useEffect(() => {
+    if (editingItem) {
+      setType(editingItem.type);
+      setAmount(editingItem.amount.toString());
+      setCategory(editingItem.category);
+      setNote(editingItem.note || '');
+    } else {
+      resetForm();
+    }
+  }, [editingItem]);
+
+  const resetForm = () => {
+    setType('income');
+    setAmount('');
+    setCategory(CATEGORIES[0]);
+    setNote('');
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!amount || isNaN(amount) || Number(amount) <= 0) return;
 
     onAdd({
+      ...(editingItem ? { id: editingItem.id, date: editingItem.date } : {}),
       type,
       amount: Number(amount),
       category,
       note
     });
-
-    setAmount('');
-    setNote('');
+    
+    resetForm();
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm p-5 mb-6">
-      <h3 className="text-lg font-bold text-gray-800 mb-4">Новий запис</h3>
+    <form onSubmit={handleSubmit} className="glass-panel rounded-2xl p-6 mb-6 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-lg font-light text-white uppercase tracking-widest">
+          {editingItem ? 'Редагувати запис' : 'Новий запис'}
+        </h3>
+        {editingItem && (
+          <button type="button" onClick={onCancelEdit} className="text-gray-400 hover:text-white transition-colors">
+            <X size={20} />
+          </button>
+        )}
+      </div>
       
-      <div className="flex bg-gray-100 p-1 rounded-xl mb-4">
+      <div className="flex p-1 rounded-xl mb-6 bg-white/5 border border-white/10">
         <button
           type="button"
-          className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${type === 'income' ? 'bg-white shadow text-green-600' : 'text-gray-500'}`}
+          className={`flex-1 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all ${type === 'income' ? 'bg-gold-400 text-black shadow-lg' : 'text-gray-400 hover:text-white'}`}
           onClick={() => setType('income')}
         >
           Дохід
         </button>
         <button
           type="button"
-          className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${type === 'expense' ? 'bg-white shadow text-red-600' : 'text-gray-500'}`}
+          className={`flex-1 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all ${type === 'expense' ? 'bg-rose-gold text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
           onClick={() => setType('expense')}
         >
           Витрата
         </button>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-5">
         <div>
-          <label className="block text-xs text-gray-500 mb-1">Сума (₴)</label>
+          <label className="block text-[10px] uppercase tracking-widest text-gray-400 mb-2">Сума (₴)</label>
           <input
             type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0"
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-gold-400 text-white placeholder-gray-600 transition-colors"
             required
           />
         </div>
 
         <div>
-          <label className="block text-xs text-gray-500 mb-1">Категорія</label>
+          <label className="block text-[10px] uppercase tracking-widest text-gray-400 mb-2">Категорія</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none"
+            className="w-full px-4 py-3 bg-premium-surface border border-white/10 rounded-xl focus:outline-none focus:border-gold-400 text-white appearance-none transition-colors"
           >
             {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
 
         <div>
-          <label className="block text-xs text-gray-500 mb-1">Примітка (опціонально)</label>
+          <label className="block text-[10px] uppercase tracking-widest text-gray-400 mb-2">Примітка</label>
           <input
             type="text"
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="Наприклад: Чистка обличчя"
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-gold-400 text-white placeholder-gray-600 transition-colors"
           />
         </div>
 
         <button
           type="submit"
-          className="w-full bg-indigo-600 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-indigo-700 transition-colors"
+          className="w-full btn-premium font-semibold py-4 text-sm uppercase tracking-widest rounded-xl flex items-center justify-center gap-2 mt-2"
         >
-          <PlusCircle size={20} />
-          Додати
+          <Check size={18} />
+          {editingItem ? 'Зберегти зміни' : 'Додати'}
         </button>
       </div>
     </form>

@@ -9,14 +9,22 @@ export const getTransactions = () => {
 
 export const saveTransaction = (transaction) => {
   const transactions = getTransactions();
-  const newTransaction = {
-    ...transaction,
-    id: crypto.randomUUID(),
-    date: new Date().toISOString()
-  };
-  transactions.unshift(newTransaction);
+  if (transaction.id) {
+    // Edit existing
+    const index = transactions.findIndex(t => t.id === transaction.id);
+    if (index !== -1) {
+      transactions[index] = { ...transactions[index], ...transaction };
+    }
+  } else {
+    // Add new
+    const newTransaction = {
+      ...transaction,
+      id: crypto.randomUUID(),
+      date: transaction.date || new Date().toISOString()
+    };
+    transactions.unshift(newTransaction);
+  }
   localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
-  return newTransaction;
 };
 
 export const deleteTransaction = (id) => {
@@ -25,18 +33,16 @@ export const deleteTransaction = (id) => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
 };
 
-export const getSummary = () => {
+export const getSummary = (month, year) => {
   const transactions = getTransactions();
-  const currentMonth = new Date().getMonth();
-  const currentYear = new Date().getFullYear();
-
+  
   let income = 0;
   let expenses = 0;
   const categoryTotals = {};
 
   transactions.forEach(t => {
     const tDate = new Date(t.date);
-    if (tDate.getMonth() === currentMonth && tDate.getFullYear() === currentYear) {
+    if (tDate.getMonth() === month && tDate.getFullYear() === year) {
       const amount = Number(t.amount);
       if (t.type === 'income') {
         income += amount;
