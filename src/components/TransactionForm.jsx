@@ -1,14 +1,22 @@
 import { useState, useEffect } from 'react';
 import { Check, X } from 'lucide-react';
 
-const CATEGORIES = ['Процедури', 'Матеріали', 'Оренда', 'Реклама', 'Інше'];
+const CATEGORIES = {
+  income: ['Процедури', 'Продаж косметики', 'Навчання', 'Інше'],
+  expense: ['Матеріали', 'Оренда', 'Реклама', 'Податки', 'Інше']
+};
 
 export default function TransactionForm({ onAdd, editingItem, onCancelEdit }) {
   const [type, setType] = useState('income');
   const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState(CATEGORIES[0]);
+  const [category, setCategory] = useState(CATEGORIES.income[0]);
   const [note, setNote] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+
+  const handleTypeChange = (newType) => {
+    setType(newType);
+    setCategory(CATEGORIES[newType][0]);
+  };
 
   useEffect(() => {
     if (editingItem) {
@@ -25,7 +33,7 @@ export default function TransactionForm({ onAdd, editingItem, onCancelEdit }) {
   const resetForm = () => {
     setType('income');
     setAmount('');
-    setCategory(CATEGORIES[0]);
+    setCategory(CATEGORIES.income[0]);
     setNote('');
     setDate(new Date().toISOString().split('T')[0]);
   };
@@ -69,14 +77,14 @@ export default function TransactionForm({ onAdd, editingItem, onCancelEdit }) {
         <button
           type="button"
           className={`flex-1 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all ${type === 'income' ? 'bg-gold-400 text-black shadow-lg' : 'text-gray-400 hover:text-white'}`}
-          onClick={() => setType('income')}
+          onClick={() => handleTypeChange('income')}
         >
           Дохід
         </button>
         <button
           type="button"
           className={`flex-1 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all ${type === 'expense' ? 'bg-rose-gold text-white shadow-lg' : 'text-gray-400 hover:text-white'}`}
-          onClick={() => setType('expense')}
+          onClick={() => handleTypeChange('expense')}
         >
           Витрата
         </button>
@@ -112,7 +120,7 @@ export default function TransactionForm({ onAdd, editingItem, onCancelEdit }) {
             onChange={(e) => setCategory(e.target.value)}
             className="block w-full max-w-full min-w-0 box-border px-4 py-3 bg-premium-surface border border-white/10 rounded-xl focus:outline-none focus:border-gold-400 text-white appearance-none transition-colors"
           >
-            {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+            {CATEGORIES[type].map(c => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
 
