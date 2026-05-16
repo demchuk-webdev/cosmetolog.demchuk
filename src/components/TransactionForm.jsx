@@ -90,7 +90,7 @@ export default function TransactionForm({ onAdd, editingItem, onCancelEdit }) {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0"
-            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-gold-400 text-white placeholder-gray-600 transition-colors"
+            className="block w-full max-w-full min-w-0 box-border px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-gold-400 text-white placeholder-gray-600 transition-colors"
             required
           />
         </div>
@@ -100,7 +100,7 @@ export default function TransactionForm({ onAdd, editingItem, onCancelEdit }) {
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-gold-400 text-white placeholder-gray-600 transition-colors [color-scheme:dark]"
+            className="block w-full max-w-full min-w-0 box-border appearance-none px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-gold-400 text-white placeholder-gray-600 transition-colors [color-scheme:dark]"
             required
           />
         </div>
@@ -110,7 +110,7 @@ export default function TransactionForm({ onAdd, editingItem, onCancelEdit }) {
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full px-4 py-3 bg-premium-surface border border-white/10 rounded-xl focus:outline-none focus:border-gold-400 text-white appearance-none transition-colors"
+            className="block w-full max-w-full min-w-0 box-border px-4 py-3 bg-premium-surface border border-white/10 rounded-xl focus:outline-none focus:border-gold-400 text-white appearance-none transition-colors"
           >
             {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
@@ -123,7 +123,7 @@ export default function TransactionForm({ onAdd, editingItem, onCancelEdit }) {
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="Наприклад: Чистка обличчя"
-            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-gold-400 text-white placeholder-gray-600 transition-colors"
+            className="block w-full max-w-full min-w-0 box-border px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-gold-400 text-white placeholder-gray-600 transition-colors"
           />
         </div>
 
